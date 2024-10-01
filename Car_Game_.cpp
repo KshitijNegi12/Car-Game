@@ -13,7 +13,7 @@ HANDLE console=GetStdHandle(STD_OUTPUT_HANDLE);
 
 class creation{
     public:
-    int score=0,speed=50,counter=10,prev_score=0;
+    int score=0, speed=60, counter=0, prev_score=0;
     char ch,name[8]="none";
     void gotoxy(int x,int y){
         COORD pos;
@@ -23,20 +23,19 @@ class creation{
     }
 
     void start_box(){
-        int i;
-        for(i=3;i<50;i+=2){
+        for(int i=3;i<50;i+=2){
             gotoxy(5,i);
             cout<<"*";
         }
-        for(i=3;i<50;i+=2){
+        for(int i=3;i<50;i+=2){
             gotoxy(25,i);
             cout<<"*";
         }
-        for(i=5;i<25;i++){
+        for(int i=5;i<25;i++){
             gotoxy(i,3);
             cout<<"*";
         }
-        for(i=5;i<26;i++){
+        for(int i=5;i<26;i++){
             gotoxy(i,51);
             cout<<"*";
         }
@@ -62,9 +61,9 @@ class creation{
 			    gotoxy(i,GAME_BOX-j+1); cout<<'-';
 		    }
         }
-	for(int i=1; i<=SCREEN_HEIGHT; i++){
-		gotoxy(i,SCREEN_WIDTH); cout<<"|";
-	}
+        for(int i=1; i<=SCREEN_HEIGHT; i++){
+            gotoxy(i,SCREEN_WIDTH); cout<<"|";
+        }
     }
 
     void cursor_visibility(bool _switch){
@@ -88,12 +87,13 @@ class creation{
         gotoxy(21,GAME_BOX+7); cout<<"Control";
         gotoxy(22,GAME_BOX+5); cout<<"------------";
         gotoxy(24,GAME_BOX+3); cout<<"A -> Move left";
-        gotoxy(25,GAME_BOX+3); cout<<"B -> Move right";
+        gotoxy(25,GAME_BOX+3); cout<<"D -> Move right";
     }
     
     void score_update(){
         gotoxy(6,GAME_BOX+7); cout<<"Score: "<<score;
     }
+
     void game_over(){
         system("cls");
 	    cout<<endl;
@@ -109,7 +109,6 @@ class creation{
                 ch=getch();
                 if(ch=='y'||ch=='Y'){
                     save();
-                    cout<<"\n\t\tYour named saved successfully."<<endl;
                     exit(0);
                 }
                 else if(ch=='n'||ch=='N'){
@@ -123,8 +122,6 @@ class creation{
             getch();
             exit(0);
         }
-	    
-        
     }
 
     void save(){
@@ -132,6 +129,11 @@ class creation{
         cin>>name;
         ofstream sf("score_file.txt");
         sf<<name<<"\n"<<score;
+        if (sf.fail()) {
+            cerr<<"\n\t\tError: Failed to write to score file.\n";
+        } else {
+            cout<<"\n\t\tYour Name and Score saved successfully!\n";
+        }
         sf.close();
     }
 };
@@ -242,7 +244,6 @@ class play:public car,public enemy{
             erase_enemy(0);
             erase_enemy(1);
 
-
             if(enemyY_cord[0]==13){
                 enemy_flag[1]=1;     // enemy car 2 activated so they won't come simultaneously 
             }
@@ -267,7 +268,7 @@ class play:public car,public enemy{
                 score_update();
             }
 
-            if(score==counter&&speed>10){
+            if(speed > 10 && score == counter){
                 speed-=5;
                 counter+=10;
             }
@@ -281,11 +282,13 @@ int play::collision(){
             return 1;
         }
     }
+
     if(enemyY_cord[1]>22){
         if(enemyX_cord[1]+4-car_pos<9&&enemyX_cord[1]+4-car_pos>=0){
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -320,7 +323,5 @@ int main(){
 			case '3':
 			exit(0);
 		}
-		
 	}while(1);
-
 }
